@@ -41,31 +41,3 @@ redis_conf = {
     'prodaction': '127.0.0.1:6379',
 }
 
-mysql_conf = {
-    'home': {
-        'mysql_user': 'hidman56',
-        'mysql_db': 'hidman',
-        'mysql_host': 'localhost',
-        'mysql_password': '12345',
-    },
-
-    'localhost': {
-        'mysql_user': 'hidman',
-        'mysql_db': 'hidman',
-        'mysql_host': 'localhost',
-        'mysql_password': '12345',
-    },
-    'stage': {
-        'mysql_user': 'hideman',
-        'mysql_db': 'hideman_new',
-        'mysql_host': '1.254.254.8',
-        'mysql_password': 'mo6tohY0',
-    },
-
-    'prodaction': {
-        'mysql_user': 'hideman',
-        'mysql_db': 'hideman_new',
-        'mysql_host': '1.254.254.8',
-        'mysql_password': 'mo6tohY0',
-    }
-}
