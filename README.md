@@ -2,7 +2,7 @@
 # LizaAlertLoader
 The photo loader for LizaAlert project. More info in the docs folder. 
 
-[Archicture](docs/Archicture.pdf) - russian documentation
+Description of the [Archicture](docs/Archicture.pdf) - russian documentation
 
 
 Relationships Schema 
