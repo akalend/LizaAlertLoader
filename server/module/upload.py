@@ -17,13 +17,8 @@ def upload(request):
 
     filename = request.POST['photo'].filename
 
-    # ``input_file`` contains the actual file data which needs to be
-    # stored somewhere.
     input_file = request.POST['photo'].file
-
     folder = conf['photo_dir'][conf['mode']]
-
-    print(folder ) 
 
     file_path = os.path.join(folder, filename)
     with open(file_path, 'wb') as output_file:
