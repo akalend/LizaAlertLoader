@@ -2,6 +2,7 @@ import os
 import shutil
 from pyramid.response import Response
 from module.template import Template
+from module.config import conf
 
 def upload(request):
     uid = request.matchdict['uid']
@@ -20,9 +21,11 @@ def upload(request):
     # stored somewhere.
     input_file = request.POST['photo'].file
 
+    folder = conf['photo_dir'][conf['mode']]
 
+    print(folder ) 
 
-    file_path = os.path.join('/tmp', filename)
+    file_path = os.path.join(folder, filename)
     with open(file_path, 'wb') as output_file:
         shutil.copyfileobj(input_file, output_file)
 
