@@ -1,0 +1,168 @@
+#!/usr/bin/python3
+
+import logging
+import os, sys, time
+import daemon, signal
+import subprocess
+
+from wsgiref.simple_server import make_server
+from pyramid.config import Configurator
+
+from module import route
+# from module import c
+from module.pidfile import PidFile
+from module.config import conf
+
+    # logging.basicConfig(filename='/var/log/app.log', level=logging.INFO)
+    # logging.info('Started mode=' + os.getenv('MODE','localhost' ))
+
+pidfile_t = '/run/app%d.pid'
+logfile = '/var/log/api.log'
+# work_home = '/home/git/api/src'
+work_home = os.getcwd()
+
+
+# mode = os.getenv('MODE', 'localhost')
+# mode = os.getenv('MODE', 'stage')
+mode = os.getenv('MODE', 'prodaction')
+conf['mode'] = mode
+
+ports = conf['port'][mode] 
+
+conf['debug'] = False
+if 'debug' in sys.argv:
+    conf['debug'] = True
+
+if 'master' in sys.argv:
+    print(ports)
+    i = 0
+    for port in ports:
+        i += 1
+        subprocess.call([work_home + '/api', 'start', str(i) ])
+
+    out = ''
+    for port in ports:
+        out += 'server 127.0.0.1:%d;\n' % port
+    print("mode %s  %s" % (mode, 'debug' if conf['debug'] else '' ) )
+    print(out)
+
+    f = open(conf['nginx_conf'][mode], 'w')
+    f.write(out)
+    f.close()
+    # subprocess.call(['nginx', '-s','reload'])
+    print('Please reload nginx configuration:')
+    print('nginx -s reload')
+
+    exit()
+
+if 'start' in sys.argv:
+    # print(sys.argv)
+    if len(sys.argv) == 3:
+    
+        try:
+            num = int(sys.argv[2])
+        except:
+            print('error parametr', sys.argv[2])
+            exit()
+
+        pidfile = pidfile_t % int(sys.argv[2])
+        context = daemon.DaemonContext(
+            working_directory=work_home,
+            umask=0o002,
+            pidfile=PidFile(pidfile),
+            stdout=open(logfile, "a"),
+            stderr=open(logfile, "a"),
+            detach_process=True
+            # logfile=logfile
+        )
+        with context:
+            print('mode %s' % mode)
+            print('process started',sys.argv[2], 'port', ports[num-1], 'pidfile',pidfile, 'mode', mode )
+            conf['process'] = num;
+            # drop_privileges()
+            config = Configurator()
+            config = route.route(config)
+
+            app = config.make_wsgi_app()
+            server = make_server('127.0.0.1', ports[num-1], app)
+            server.serve_forever()
+
+
+    elif len(sys.argv) == 2:
+        # print(ports)
+        i = 0
+        for port in ports:
+            i += 1
+            subprocess.call([work_home + '/api', 'start', str(i) ])
+
+        print( 'mode=' + mode )
+        out = ''
+        for port in ports:
+            out += '\nserver 127.0.0.1:%d;' % port
+        print(out)
+
+        # f = open(conf['nginx_conf'][mode], 'w')
+        # f.write(out)
+        # f.close()
+        # time.sleep(3)
+
+
+        # subprocess.call(['openresty', '-s','reload', '-c', '/etc/nginx/nginx.conf'])
+        # subprocess.call(['nginx', '-s','reload'])
+
+        exit()
+
+    else:
+        print('api start [process_number]')
+    exit()
+
+
+if 'stop' in sys.argv and len(sys.argv) == 3:
+        pidfile = pidfile_t % int(sys.argv[2])
+        pidfile = PidFile(pidfile)
+        pid = pidfile.read()
+        os.kill(int(pid), signal.SIGTERM)
+        exit()    
+
+if 'stop' in sys.argv:
+    # print('len',len(ports))
+    i = 0
+    for port in ports:
+        i += 1
+        pidfile = pidfile_t % i
+        pidfile = PidFile(pidfile)
+        pid = pidfile.read()
+        os.kill(int(pid), signal.SIGTERM)
+
+    exit()
+
+if 'test' in sys.argv:
+    # print('len',len(ports))
+    exit()
+
+if 'status' in sys.argv:
+    print('processes:')
+    for dir in os.listdir('/proc'):
+        try:
+            if int(dir) > 1:
+                path = '/proc/' + dir + '/comm'
+                f=open( path )
+                cmd=f.readline()
+                f.close()
+                if cmd == "api\n" and os.getpid() != int(dir):
+                    print('api',dir)
+        except:
+            pass
+    exit()
+
+# print('started mode %s port %d'  % (mode, ports[0]) )
+print("started mode %s  %s  port %d" % (mode, 'debug' if conf['debug'] else '' , ports[0]) )
+# drop_privileges()
+config = Configurator()
+config = route.route(config)
+
+conf['process'] = -1;
+
+app = config.make_wsgi_app()
+server = make_server('127.0.0.1', ports[0], app)
+server.serve_forever()
