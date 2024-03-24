@@ -1,6 +1,7 @@
 
 from module.config import conf
 from module import version
+from module import upload
 # import module.version
 
 
@@ -10,6 +11,11 @@ def route(config):
 
     config.add_route('api', '/')
     config.add_view(version.echo, route_name='api')
+
+    config.add_route('upload', 'upload/{uid}')
+    config.add_view(upload.upload, route_name='upload')
+
+
 
     config.scan()
 

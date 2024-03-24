@@ -5,8 +5,9 @@ conf = {
     'email_passwd' : 'foofahh1queiZ2ai',
 
     'template_path' : {
-        'prodaction': '/home/git/api/src/templates/',
-        'localhost' : '/home/akalend/projects/api/src/templates/'
+        'prodaction': '/home/akalend/projects/LizaAlertLoader/server/templates/',
+        'prodaction_old': '/home/git/api/src/templates/',
+        'localhost' : '/home/akalend/projects/LizaAlertLoader/server/templates/'
     },
 
     'expire_cached': 21600,
