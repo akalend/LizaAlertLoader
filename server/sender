@@ -7,16 +7,30 @@
 #   проверяем работу демона ./sender status
 #---------------------------
 
+import json
 import logging
 import os, sys, time
 import daemon, signal
 import subprocess
-import json
+from random import randint
 
 from pyramid.config import Configurator
 from module.pidfile import PidFile
 from module.config import conf
 from module.cache import Cache
+
+
+'''
+     это заглушка, которая должна вызывать модель и возвращать результат 
+'''
+def CheckModel(photo):
+    res = []
+    for i in range(3):
+        res.append((randint(0,1000), randint(0,1000)))
+
+    time.sleep(2)
+    return res
+
 
 
 pidfile = '/run/api/sender.pid'
@@ -45,6 +59,9 @@ if len(sys.argv) == 1:
             if not res is None: 
                 item = json.loads(res.decode('ascii'))
                 print(item)
+                res = CheckModel(item['name'])
+                print(res)
+                cache.push( item['uid'], '{{"name":"{}","pos":"{}" }}'.format(item['name'], str(res) )    )
             else:
                 print('.')
 
@@ -67,12 +84,12 @@ if 'start' in sys.argv:
         print('process started:', 'pidfile',pidfile, 'mode', mode )
         # conf['process'] = num;
         # drop_privileges()
-        cache = Cache()
-        while 1:
-            time.sleep(1)
-            res = cache.get('in')
-            if not res is None: 
-                print(res)
+        # cache = Cache()
+        # while 1:
+        #     time.sleep(1)
+        #     res = cache.get('in')
+        #     if not res is None: 
+        #         print(res)
 
 elif 'status' in sys.argv:
     print('processes:')
