@@ -46,15 +46,16 @@ def finish(request):
 
 
     files = os.listdir(files_folder)
+    cache = Cache()
 
-    file_list = ','.join(files)    
+    # file_list = ','.join(files)    
+    for file in files:
+        cache.push('in', '"{{uid":{},"name":"{}"}}'.format(uid,file) )
 
         # cache.push(key, photo)
         # print(photo, key  )
 
     
-    cache = Cache()
-    cache.set('in',file_list)
 
     # subprocess.call([work_home + '/api', 'start', str(i) ])
     return Response('Ok')

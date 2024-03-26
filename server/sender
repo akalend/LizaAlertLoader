@@ -36,7 +36,16 @@ if 'debug' in sys.argv:
     conf['debug'] = True
 
 
-# print('args', len(sys.argv))
+if len(sys.argv) == 1:
+        cache = Cache()
+        while 1:
+            time.sleep(1)
+            res = cache.pop('in')
+            if not res is None: 
+                print(res)
+            else:
+                print('.')
+
 
 if 'start' in sys.argv:
     print(sys.argv, work_home)
@@ -60,7 +69,8 @@ if 'start' in sys.argv:
         while 1:
             time.sleep(1)
             res = cache.get('in')
-            print(res)
+            if not res is None: 
+                print(res)
 
 elif 'status' in sys.argv:
     print('processes:')
@@ -87,6 +97,5 @@ elif 'stop' in sys.argv:
 
 
 
-exit()
 
 
