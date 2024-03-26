@@ -50,7 +50,7 @@ def finish(request):
 
     # file_list = ','.join(files)    
     for file in files:
-        cache.push('in', '"{{uid":{},"name":"{}"}}'.format(uid,file) )
+        cache.push('in', '{{"uid":{},"name":"{}"}}'.format(uid,file) )
 
         # cache.push(key, photo)
         # print(photo, key  )

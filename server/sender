@@ -11,6 +11,7 @@ import logging
 import os, sys, time
 import daemon, signal
 import subprocess
+import json
 
 from pyramid.config import Configurator
 from module.pidfile import PidFile
@@ -42,7 +43,8 @@ if len(sys.argv) == 1:
             time.sleep(1)
             res = cache.pop('in')
             if not res is None: 
-                print(res)
+                item = json.loads(res.decode('ascii'))
+                print(item)
             else:
                 print('.')
 
@@ -94,8 +96,3 @@ elif 'stop' in sys.argv:
     os.kill(int(pid), signal.SIGTERM)
 
     exit()
-
-
-
-
-
