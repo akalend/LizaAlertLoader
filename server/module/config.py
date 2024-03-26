@@ -22,7 +22,7 @@ conf = {
         'prodaction': 100000}, # 604800 = 7 * 86400 (1 week ) * 12 = 1 квартал
 
     'photo_dir' : {
-       'prodaction' : '/tmp/photo',
+       'prodaction' : 'tmp',
        'stage' : '/tmp/photo',
        'localhost' : '/tmp/photo'
 
