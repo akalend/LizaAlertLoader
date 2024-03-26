@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
 #---------------------------
-# этот демон 
-#
+# этот демон, который берет метаданные из очереди и вызывает модель  
+#   запускается             ./sender start         отправляет фото в модель 
+#   останавливается         ./sender stop
+#   проверяем работу демона ./sender status
 #---------------------------
 
 import logging
@@ -84,21 +86,7 @@ elif 'stop' in sys.argv:
     exit()
 
 
-# elif len(sys.argv) == 2:
-#         # print(ports)
-#         subprocess.call([work_home + '/sender', 'start'])
-
-#         print( 'mode=' + mode )
-#         exit()
 
 exit()
 
 
-
-
-if 'test' in sys.argv:
-    # print('len',len(ports))
-    exit()
-
-
-print('exit 0')
