@@ -18,17 +18,3 @@ def sendPhoto(photo):
 files = os.listdir(folder)
 for photo in files:
     sendPhoto(photo)
-
-
-# # store the target API URL
-
-# # create a reference to the file
-
-# # send the request
-
-# # check the result
-# if response.ok:
-#     print("Upload complete")
-#     print(response.text)
-# else:
-#     print("Something went wrong")

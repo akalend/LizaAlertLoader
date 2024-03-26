@@ -15,6 +15,9 @@ def route(config):
     config.add_route('upload', 'upload/{uid}')
     config.add_view(upload.upload, route_name='upload')
 
+    config.add_route('finish', 'upload/{uid}/finish')
+    config.add_view(upload.finish, route_name='finish')
+
 
 
     config.scan()

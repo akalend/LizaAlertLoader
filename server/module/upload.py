@@ -3,6 +3,8 @@ import shutil
 from pyramid.response import Response
 from module.template import Template
 from module.config import conf
+from module.cache import Cache
+import subprocess
 
 def upload(request):
     uid = request.matchdict['uid']
@@ -20,8 +22,40 @@ def upload(request):
     input_file = request.POST['photo'].file
     folder = conf['photo_dir'][conf['mode']]
 
-    file_path = os.path.join(folder, filename)
+    folder_dir = os.path.join(folder, uid)
+
+    if not os.path.isdir(folder_dir):
+        os.mkdir(folder_dir) 
+
+    file_path = os.path.join(folder_dir,filename)
     with open(file_path, 'wb') as output_file:
         shutil.copyfileobj(input_file, output_file)
 
     return Response('upload:' + uid)
+
+
+def finish(request):
+    uid = request.matchdict['uid']
+
+    if request.method != 'GET':
+        return Response('Ok')
+
+    folder = conf['photo_dir'][conf['mode']]
+    files_folder = os.path.join(folder,uid)
+    key = 'in_' + uid;
+
+
+    files = os.listdir(files_folder)
+
+    file_list = ','.join(files)    
+
+        # cache.push(key, photo)
+        # print(photo, key  )
+
+    
+    cache = Cache()
+    cache.set('in',file_list)
+
+    # subprocess.call([work_home + '/api', 'start', str(i) ])
+    return Response('Ok')
+

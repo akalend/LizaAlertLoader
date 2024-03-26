@@ -1,0 +1,104 @@
+#!/usr/bin/python3
+
+#---------------------------
+# этот демон 
+#
+#---------------------------
+
+import logging
+import os, sys, time
+import daemon, signal
+import subprocess
+
+from pyramid.config import Configurator
+from module.pidfile import PidFile
+from module.config import conf
+from module.cache import Cache
+
+
+pidfile = '/run/api/sender.pid'
+logfile = '/var/log/sender.log'
+# work_home = '/home/git/api/src'
+work_home = os.getcwd()
+
+
+# mode = os.getenv('MODE', 'localhost')
+# mode = os.getenv('MODE', 'stage')
+mode = os.getenv('MODE', 'prodaction')
+conf['mode'] = mode
+
+ports = conf['port'][mode] 
+
+conf['debug'] = False
+if 'debug' in sys.argv:
+    conf['debug'] = True
+
+
+# print('args', len(sys.argv))
+
+if 'start' in sys.argv:
+    print(sys.argv, work_home)
+    
+
+    context = daemon.DaemonContext(
+        working_directory=work_home,
+        umask=0o002,
+        pidfile=PidFile(pidfile),
+        stdout=open(logfile, "a"),
+        stderr=open(logfile, "a"),
+        detach_process=True
+        # logfile=logfile
+    )
+    with context:
+        print('mode %s' % mode)
+        print('process started:', 'pidfile',pidfile, 'mode', mode )
+        # conf['process'] = num;
+        # drop_privileges()
+        cache = Cache()
+        while 1:
+            time.sleep(1)
+            res = cache.get('in')
+            print(res)
+
+elif 'status' in sys.argv:
+    print('processes:')
+    for dir in os.listdir('/proc'):
+        try:
+            if int(dir) > 1:
+                path = '/proc/' + dir + '/comm'
+                f=open( path )
+                cmd=f.readline()
+                f.close()
+                if cmd == "sender\n" and os.getpid() != int(dir):
+                    print('sender',dir)
+        except:
+            pass
+    exit()
+
+elif 'stop' in sys.argv:
+    # print('len',len(ports))
+    pidfile = PidFile(pidfile)
+    pid = pidfile.read()
+    os.kill(int(pid), signal.SIGTERM)
+
+    exit()
+
+
+# elif len(sys.argv) == 2:
+#         # print(ports)
+#         subprocess.call([work_home + '/sender', 'start'])
+
+#         print( 'mode=' + mode )
+#         exit()
+
+exit()
+
+
+
+
+if 'test' in sys.argv:
+    # print('len',len(ports))
+    exit()
+
+
+print('exit 0')
