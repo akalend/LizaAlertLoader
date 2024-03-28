@@ -60,8 +60,13 @@ if len(sys.argv) == 1:
                 item = json.loads(res.decode('ascii'))
                 print(item)
                 res = CheckModel(item['name'])
-                print(res)
-                cache.push( item['uid'], '{{"name":"{}","pos":"{}" }}'.format(item['name'], str(res) )    )
+                
+                items = ''
+                for it in res:
+                    items = items + '{{"x":{},"y":{}}},'.format(it[0],it[1])
+                items = items[0:-1]
+
+                cache.push( item['uid'], '{{"name":"{}","items":[{}] }}'.format(item['name'], items )    )
             else:
                 print('.')
 

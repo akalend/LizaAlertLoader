@@ -52,11 +52,28 @@ def finish(request):
     for file in files:
         cache.push('in', '{{"uid":{},"name":"{}"}}'.format(uid,file) )
 
-        # cache.push(key, photo)
-        # print(photo, key  )
-
-    
 
     # subprocess.call([work_home + '/api', 'start', str(i) ])
     return Response('Ok')
 
+
+
+def result(request):
+    if request.method != 'GET':
+        return Response('Ok')
+
+    uid = request.matchdict['uid']
+
+    cache = Cache()
+    # print(out)
+
+    res = Response()
+    res.headers['Content-Type'] = 'application/json'
+
+    out =  cache.pop(uid)
+    if out is None:
+        res.text = '{}'
+    else:
+        res.text = out.decode('ascii')
+
+    return res
