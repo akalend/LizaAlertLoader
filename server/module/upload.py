@@ -60,7 +60,7 @@ def finish(request):
 
 def result(request):
     if request.method != 'GET':
-        return Response('Ok')
+        return Response('Ok')   # сделать везде возврат код 405  Method Not Allowed
 
     uid = request.matchdict['uid']
 
