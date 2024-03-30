@@ -16,7 +16,7 @@ from module.config import conf
     # logging.basicConfig(filename='/var/log/app.log', level=logging.INFO)
     # logging.info('Started mode=' + os.getenv('MODE','localhost' ))
 
-pidfile_t = '/run/app%d.pid'
+pidfile_t = '/run/api/app%d.pid'
 logfile = '/var/log/api.log'
 # work_home = '/home/git/api/src'
 work_home = os.getcwd()
@@ -33,27 +33,6 @@ conf['debug'] = False
 if 'debug' in sys.argv:
     conf['debug'] = True
 
-if 'master' in sys.argv:
-    print(ports)
-    i = 0
-    for port in ports:
-        i += 1
-        subprocess.call([work_home + '/api', 'start', str(i) ])
-
-    out = ''
-    for port in ports:
-        out += 'server 127.0.0.1:%d;\n' % port
-    print("mode %s  %s" % (mode, 'debug' if conf['debug'] else '' ) )
-    print(out)
-
-    f = open(conf['nginx_conf'][mode], 'w')
-    f.write(out)
-    f.close()
-    # subprocess.call(['nginx', '-s','reload'])
-    print('Please reload nginx configuration:')
-    print('nginx -s reload')
-
-    exit()
 
 if 'start' in sys.argv:
     # print(sys.argv)

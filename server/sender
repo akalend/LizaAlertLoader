@@ -31,6 +31,22 @@ def CheckModel(photo):
     time.sleep(2)
     return res
 
+def drop_privileges(uid_name='nobody', gid_name='nogroup'):
+    if os.getuid() != 0:
+        # We're not root so, like, whatever dude
+        return
+
+    # Get the uid/gid from the name
+    running_uid = pwd.getpwnam(uid_name).pw_uid
+    running_gid = grp.getgrnam(gid_name).gr_gid
+
+    # Remove group privileges
+    os.setgroups([])
+
+    # Try setting the new uid/gid
+    os.setgid(running_gid)
+    os.setuid(running_uid)
+
 
 
 pidfile = '/run/api/sender.pid'
@@ -88,13 +104,22 @@ if 'start' in sys.argv:
         print('mode %s' % mode)
         print('process started:', 'pidfile',pidfile, 'mode', mode )
         # conf['process'] = num;
-        # drop_privileges()
-        # cache = Cache()
-        # while 1:
-        #     time.sleep(1)
-        #     res = cache.get('in')
-        #     if not res is None: 
-        #         print(res)
+        drop_privileges()
+        cache = Cache()
+        while 1:
+            time.sleep(1)
+            res = cache.pop('in')
+            if not res is None: 
+                item = json.loads(res.decode('ascii'))
+                print(item)
+                res = CheckModel(item['name'])
+                
+                items = ''
+                for it in res:
+                    items = items + '{{"x":{},"y":{}}},'.format(it[0],it[1])
+                items = items[0:-1]
+
+                cache.push( item['uid'], '{{"name":"{}","items":[{}] }}'.format(item['name'], items )    )
 
 elif 'status' in sys.argv:
     print('processes:')
