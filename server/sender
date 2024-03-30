@@ -26,7 +26,7 @@ from module.cache import Cache
 def CheckModel(photo):
     res = []
     for i in range(3):
-        res.append((randint(0,1000), randint(0,1000)))
+        res.append((randint(0,1000), randint(0,1000), randint(0,100), randint(0,100)))
 
     time.sleep(2)
     return res
@@ -79,7 +79,7 @@ if len(sys.argv) == 1:
                 
                 items = ''
                 for it in res:
-                    items = items + '{{"x":{},"y":{}}},'.format(it[0],it[1])
+                    items = items + '{{"x":{},"y":{},"w":{},"h":{}}},'.format(it[0],it[1],it[2],it[3])
                 items = items[0:-1]
 
                 cache.push( item['uid'], '{{"name":"{}","items":[{}] }}'.format(item['name'], items )    )
