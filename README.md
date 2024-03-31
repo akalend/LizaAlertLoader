@@ -1,4 +1,4 @@
-![image](img/LizaAlert_logo.jpg)
+![image](img/LizaAlert.jpg)
 # LizaAlertLoader
 The photo loader for LizaAlert project. More info in the docs folder. 
 
